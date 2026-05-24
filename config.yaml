@@ -1,0 +1,40 @@
+app:
+  page_title: India Geo Analytics
+  page_icon: ":bar_chart:"
+  layout: wide
+  initial_sidebar_state: expanded
+
+data:
+  path: india.csv
+
+columns:
+  state: State
+  district: District
+  latitude: Latitude
+  longitude: Longitude
+  population: Population
+  literacy_rate: literacy_rate
+  metric_start_index: 5
+
+sidebar:
+  title: India Geo Analytics
+  caption: District-level geospatial exploration
+  overall_label: Overall India
+  region_label: Region
+  primary_label: Bubble size metric
+  secondary_label: Bubble color metric
+  help_text: Bubble size uses the primary metric. Color uses the secondary metric.
+
+ui:
+  eyebrow: Interactive district intelligence
+  title: India Geo Analytics Dashboard
+  description: Explore district-level population, literacy, gender ratio, and internet-access indicators across India with a focused geospatial view.
+
+map:
+  india_zoom: 4
+  state_zoom: 6
+  size_max: 35
+  style: carto-positron
+  width: 1200
+  height: 680
+  color_scale: Viridis

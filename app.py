@@ -1,40 +1,67 @@
 import streamlit as st
-import numpy as np
-import pandas as pd
-import plotly.express as px
 
-st.set_page_config(layout='wide')
+from src.config import load_config
+from src.data import filter_by_state, get_metric_columns, get_state_options, load_india_data
+from src.ui import (
+    render_header,
+    render_map_context,
+    render_page_styles,
+    render_sidebar,
+    render_summary_metrics,
+)
+from src.visualization import build_geo_map
 
-df = pd.read_csv('india.csv')
 
-list_of_states = list(df['State'].unique())
-list_of_states.insert(0,'Overall India')
+def main() -> None:
+    config = load_config()
+    app_config = config["app"]
 
-st.sidebar.title("India's Data Visualization")
+    st.set_page_config(
+        page_title=app_config["page_title"],
+        page_icon=app_config["page_icon"],
+        layout=app_config["layout"],
+        initial_sidebar_state=app_config["initial_sidebar_state"],
+    )
 
-selected_state = st.sidebar.selectbox('Select a state',list_of_states)
-primary = st.sidebar.selectbox('Select Primary Parameter',sorted(df.columns[5:]))
-secondary = st.sidebar.selectbox('Select Secondary Parameter',sorted(df.columns[5:]))
+    df = load_india_data(config["data"]["path"])
+    metric_columns = get_metric_columns(df, config["columns"]["metric_start_index"])
+    state_options = get_state_options(
+        df,
+        state_column=config["columns"]["state"],
+        overall_label=config["sidebar"]["overall_label"],
+    )
 
-plot = st.sidebar.button('Plot Graph')
+    render_page_styles()
 
-if plot:
+    selected_state, primary_metric, secondary_metric = render_sidebar(
+        state_options=state_options,
+        metric_columns=metric_columns,
+        sidebar_config=config["sidebar"],
+    )
 
-    st.text('Size represent primary parameter')
-    st.text('Color represents secondary parameter')
-    if selected_state == 'Overall India':
-        # plot for india
-        fig = px.scatter_mapbox(df, lat="Latitude", lon="Longitude", size=primary, color=secondary, zoom=4,size_max=35,
-                                mapbox_style="carto-positron",width=1200,height=700,hover_name='District')
+    filtered_df = filter_by_state(
+        df=df,
+        state_column=config["columns"]["state"],
+        selected_state=selected_state,
+        overall_label=config["sidebar"]["overall_label"],
+    )
 
-        st.plotly_chart(fig,use_container_width=True)
-    else:
-        # plot for state
-        state_df = df[df['State'] == selected_state]
+    render_header(config["ui"])
+    render_summary_metrics(filtered_df, config["columns"])
+    render_map_context(selected_state, primary_metric, secondary_metric)
 
-        fig = px.scatter_mapbox(state_df, lat="Latitude", lon="Longitude", size=primary, color=secondary, zoom=6, size_max=35,
-                                mapbox_style="carto-positron", width=1200, height=700,hover_name='District')
+    fig = build_geo_map(
+        df=filtered_df,
+        selected_state=selected_state,
+        primary_metric=primary_metric,
+        secondary_metric=secondary_metric,
+        columns=config["columns"],
+        map_config=config["map"],
+        overall_label=config["sidebar"]["overall_label"],
+    )
 
-        st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True)
 
-    fig.show()
+
+if __name__ == "__main__":
+    main()
