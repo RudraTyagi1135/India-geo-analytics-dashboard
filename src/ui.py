@@ -101,17 +101,12 @@ def render_page_styles() -> None:
                 margin: 1.15rem 0 0.45rem;
             }
 
-            .metric-grid {
-                display: grid;
-                grid-template-columns: repeat(4, minmax(0, 1fr));
-                gap: 1rem;
-            }
-
             .metric-card {
                 background: var(--panel);
                 border: 1px solid var(--line);
                 border-radius: 8px;
                 padding: 1rem 1.05rem;
+                min-height: 104px;
                 min-width: 0;
             }
 
@@ -163,15 +158,6 @@ def render_page_styles() -> None:
                     font-size: 1.65rem;
                 }
 
-                .metric-grid {
-                    grid-template-columns: repeat(2, minmax(0, 1fr));
-                }
-            }
-
-            @media (max-width: 480px) {
-                .metric-grid {
-                    grid-template-columns: 1fr;
-                }
             }
         </style>
         """,
@@ -223,17 +209,17 @@ def render_summary_metrics(df: pd.DataFrame, columns: dict[str, Any]) -> None:
         ("Population", f"{total_population:,}"),
         ("Avg literacy", f"{avg_literacy:.1f}%"),
     ]
-    cards = "\n".join(
-        f"""
-        <div class="metric-card">
-            <div class="metric-label">{escape(label)}</div>
-            <div class="metric-value">{escape(value)}</div>
-        </div>
-        """
-        for label, value in metrics
-    )
-
-    st.markdown(f'<div class="metric-grid">{cards}</div>', unsafe_allow_html=True)
+    columns_layout = st.columns(4)
+    for column, (label, value) in zip(columns_layout, metrics):
+        column.markdown(
+            (
+                '<div class="metric-card">'
+                f'<div class="metric-label">{escape(label)}</div>'
+                f'<div class="metric-value">{escape(value)}</div>'
+                "</div>"
+            ),
+            unsafe_allow_html=True,
+        )
 
 
 def render_map_context(
