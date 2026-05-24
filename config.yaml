@@ -17,6 +17,7 @@ columns:
   metric_start_index: 5
 
 regions:
+  official_state_count: 28
   union_territories:
     - Chandigarh
     - Daman and Diu

@@ -200,18 +200,14 @@ def render_header(ui_config: dict[str, str]) -> None:
 def render_summary_metrics(
     df: pd.DataFrame,
     columns: dict[str, Any],
-    regions_config: dict[str, list[str]],
+    regions_config: dict[str, Any],
     selected_state: str,
     overall_label: str,
 ) -> None:
     total_population = int(df[columns["population"]].sum())
     district_count = df[columns["district"]].nunique()
-    union_territories = set(regions_config["union_territories"])
     if selected_state == overall_label:
-        state_count = df.loc[
-            ~df[columns["state"]].isin(union_territories),
-            columns["state"],
-        ].nunique()
+        state_count = regions_config.get("official_state_count", 28)
         state_label = "States covered"
     else:
         state_count = 1
