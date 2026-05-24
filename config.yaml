@@ -16,6 +16,12 @@ columns:
   literacy_rate: literacy_rate
   metric_start_index: 5
 
+regions:
+  union_territories:
+    - Chandigarh
+    - Daman and Diu
+    - Puducherry
+
 sidebar:
   title: India Geo Analytics
   caption: District-level geospatial exploration

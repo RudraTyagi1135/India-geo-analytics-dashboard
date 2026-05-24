@@ -197,15 +197,30 @@ def render_header(ui_config: dict[str, str]) -> None:
     )
 
 
-def render_summary_metrics(df: pd.DataFrame, columns: dict[str, Any]) -> None:
+def render_summary_metrics(
+    df: pd.DataFrame,
+    columns: dict[str, Any],
+    regions_config: dict[str, list[str]],
+    selected_state: str,
+    overall_label: str,
+) -> None:
     total_population = int(df[columns["population"]].sum())
     district_count = df[columns["district"]].nunique()
-    state_count = df[columns["state"]].nunique()
+    union_territories = set(regions_config["union_territories"])
+    if selected_state == overall_label:
+        state_count = df.loc[
+            ~df[columns["state"]].isin(union_territories),
+            columns["state"],
+        ].nunique()
+        state_label = "States covered"
+    else:
+        state_count = 1
+        state_label = "Region covered"
     avg_literacy = df[columns["literacy_rate"]].mean()
 
     metrics = [
         ("Districts", f"{district_count:,}"),
-        ("States covered", f"{state_count:,}"),
+        (state_label, f"{state_count:,}"),
         ("Population", f"{total_population:,}"),
         ("Avg literacy", f"{avg_literacy:.1f}%"),
     ]

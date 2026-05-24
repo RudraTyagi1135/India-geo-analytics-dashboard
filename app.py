@@ -47,7 +47,13 @@ def main() -> None:
     )
 
     render_header(config["ui"])
-    render_summary_metrics(filtered_df, config["columns"])
+    render_summary_metrics(
+        filtered_df,
+        config["columns"],
+        config["regions"],
+        selected_state,
+        config["sidebar"]["overall_label"],
+    )
     render_map_context(selected_state, primary_metric, secondary_metric)
 
     fig = build_geo_map(
