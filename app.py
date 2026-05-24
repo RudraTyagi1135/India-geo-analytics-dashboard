@@ -66,7 +66,7 @@ def main() -> None:
         overall_label=config["sidebar"]["overall_label"],
     )
 
-    st.plotly_chart(fig, width=True)
+    st.plotly_chart(fig, width='stretch')
 
 
 if __name__ == "__main__":
