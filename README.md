@@ -27,6 +27,7 @@ The **India Geo Analytics Dashboard** is an interactive geospatial analytics sys
 - Streamlit
 - Plotly Mapbox
 - Pandas
+- PyYAML
 - Python
 
 The application enables users to explore **state-wise district-level indicators across India** through interactive geospatial visualization.
@@ -252,20 +253,26 @@ Sidebar controls enable:
 | Plotly | Geospatial visualization |
 | Pandas | Data processing |
 | NumPy | Numerical computation |
+| PyYAML | Configuration management |
 
 ---
 
 # 📂 Project Structure
 
 ```text
-INDIA_GEO_ANALYTICS_DASHBOARD/
-│
-├── app.py
-├── india.csv
-├── requirements.txt
-├── README.md
-├── .gitignore
-└── .venv/
+India-geo-analytics-dashboard/
+|-- app.py
+|-- config.yaml
+|-- india.csv
+|-- requirements.txt
+|-- README.md
+|-- .gitignore
+|-- src/
+|   |-- config.py
+|   |-- data.py
+|   |-- ui.py
+|   `-- visualization.py
+`-- .venv/
 ```
 
 ---
@@ -298,11 +305,7 @@ Example metrics:
 
 ## Step 3
 
-Click:
-
-```text
-Plot Graph
-```
+The dashboard updates automatically when filters are changed.
 
 ---
 
@@ -335,8 +338,8 @@ Analyze:
 ## 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/your-username/INDIA-GEO-ANALYTICS-DASHBOARD.git
-cd INDIA-GEO-ANALYTICS-DASHBOARD
+git clone https://github.com/RudraTyagi1135/India-geo-analytics-dashboard.git
+cd India-geo-analytics-dashboard
 ```
 
 ---
@@ -383,7 +386,7 @@ The application is deployed using:
 
 Deployment link:
 
-:contentReference[oaicite:1]{index=1}
+https://india-geo-analytics-1135.streamlit.app/
 
 ---
 
@@ -391,7 +394,6 @@ Deployment link:
 
 Planned enhancements include:
 
-- `@st.cache_data` optimization
 - Time-series analytics support
 - Real-world API integration
 - ML-based geographic clustering
