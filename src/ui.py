@@ -1,3 +1,4 @@
+from html import escape
 from typing import Any
 
 import pandas as pd
@@ -41,9 +42,17 @@ def render_page_styles() -> None:
                 border-color: #334155;
             }
 
+            [data-testid="stSidebar"] div[data-baseweb="select"] div,
             [data-testid="stSidebar"] div[data-baseweb="select"] span,
+            [data-testid="stSidebar"] div[data-baseweb="select"] p,
             [data-testid="stSidebar"] div[data-baseweb="select"] input {
                 color: #172033 !important;
+                -webkit-text-fill-color: #172033 !important;
+            }
+
+            [data-testid="stSidebar"] div[data-baseweb="select"] svg {
+                color: #172033 !important;
+                fill: #172033 !important;
             }
 
             .main .block-container {
@@ -92,6 +101,37 @@ def render_page_styles() -> None:
                 margin: 1.15rem 0 0.45rem;
             }
 
+            .metric-grid {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 1rem;
+            }
+
+            .metric-card {
+                background: var(--panel);
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                padding: 1rem 1.05rem;
+                min-width: 0;
+            }
+
+            .metric-label {
+                color: #475569;
+                font-size: 0.78rem;
+                font-weight: 800;
+                line-height: 1.25;
+                margin-bottom: 0.55rem;
+                text-transform: uppercase;
+            }
+
+            .metric-value {
+                color: var(--ink);
+                font-size: clamp(1.55rem, 2.1vw, 2rem);
+                font-weight: 850;
+                line-height: 1.15;
+                overflow-wrap: anywhere;
+            }
+
             .map-note {
                 background: #ffffff;
                 border: 1px solid var(--line);
@@ -113,22 +153,6 @@ def render_page_styles() -> None:
                 padding: 0.35rem;
             }
 
-            div[data-testid="stMetric"] {
-                background: var(--panel);
-                border: 1px solid var(--line);
-                border-radius: 8px;
-                padding: 1rem;
-            }
-
-            div[data-testid="stMetricLabel"] p {
-                color: var(--muted);
-                font-weight: 800;
-            }
-
-            div[data-testid="stMetricValue"] {
-                color: var(--ink);
-            }
-
             @media (max-width: 768px) {
                 .main .block-container {
                     padding-left: 1rem;
@@ -137,6 +161,16 @@ def render_page_styles() -> None:
 
                 .dashboard-title {
                     font-size: 1.65rem;
+                }
+
+                .metric-grid {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+            }
+
+            @media (max-width: 480px) {
+                .metric-grid {
+                    grid-template-columns: 1fr;
                 }
             }
         </style>
@@ -168,9 +202,9 @@ def render_header(ui_config: dict[str, str]) -> None:
     st.markdown(
         f"""
         <div class="dashboard-hero">
-            <div class="eyebrow">{ui_config["eyebrow"]}</div>
-            <h1 class="dashboard-title">{ui_config["title"]}</h1>
-            <p class="dashboard-copy">{ui_config["description"]}</p>
+            <div class="eyebrow">{escape(ui_config["eyebrow"])}</div>
+            <h1 class="dashboard-title">{escape(ui_config["title"])}</h1>
+            <p class="dashboard-copy">{escape(ui_config["description"])}</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -183,11 +217,23 @@ def render_summary_metrics(df: pd.DataFrame, columns: dict[str, Any]) -> None:
     state_count = df[columns["state"]].nunique()
     avg_literacy = df[columns["literacy_rate"]].mean()
 
-    metric_one, metric_two, metric_three, metric_four = st.columns(4)
-    metric_one.metric("Districts", f"{district_count:,}")
-    metric_two.metric("States covered", f"{state_count:,}")
-    metric_three.metric("Population", f"{total_population:,}")
-    metric_four.metric("Avg literacy", f"{avg_literacy:.1f}%")
+    metrics = [
+        ("Districts", f"{district_count:,}"),
+        ("States covered", f"{state_count:,}"),
+        ("Population", f"{total_population:,}"),
+        ("Avg literacy", f"{avg_literacy:.1f}%"),
+    ]
+    cards = "\n".join(
+        f"""
+        <div class="metric-card">
+            <div class="metric-label">{escape(label)}</div>
+            <div class="metric-value">{escape(value)}</div>
+        </div>
+        """
+        for label, value in metrics
+    )
+
+    st.markdown(f'<div class="metric-grid">{cards}</div>', unsafe_allow_html=True)
 
 
 def render_map_context(
@@ -199,8 +245,8 @@ def render_map_context(
     st.markdown(
         f"""
         <div class="map-note">
-            <strong>{selected_state}</strong> is plotted with <strong>{primary_metric}</strong> as bubble size
-            and <strong>{secondary_metric}</strong> as color intensity.
+            <strong>{escape(selected_state)}</strong> is plotted with <strong>{escape(primary_metric)}</strong> as bubble size
+            and <strong>{escape(secondary_metric)}</strong> as color intensity.
         </div>
         """,
         unsafe_allow_html=True,
