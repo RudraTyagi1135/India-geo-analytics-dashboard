@@ -452,11 +452,10 @@ Add application screenshots here for stronger recruiter impact:
 
 ### Focus Areas
 
-- ML Systems
-- MLOps
-- AI Infrastructure
-- Geospatial Analytics Systems
-- Data Analytics Engineering
+Geospatial Analytics
+Data Visualization Engineering
+Interactive Dashboard Systems
+Analytics Engineering
 
 ---
 
